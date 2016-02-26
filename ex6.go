@@ -1,7 +1,3 @@
-/* going to use UDP
-my IP-address : 129.241.187.161
-
-*/
 package main
 
 import (
@@ -18,68 +14,61 @@ func CheckError(err error) {
 	}
 }
 
-//start å sende imAlive før du initialiserer ny master.
-
-//master sends numbers
 func master(ipAdr string, port string, counter int) {
-	fmt.Println("Im alive")
+	fmt.Println("This is the master now")
+
 	serverAddr, err := net.ResolveUDPAddr("udp", ipAdr+":"+port)
 	conn, err := net.DialUDP("udp", nil, serverAddr)
+
 	CheckError(err)
+
 	countSendS := ""
 	countSend := make([]byte, 1024)
+
+	time.Sleep(1 * time.Second)
+
 	for {
 		counter++
 		countSendS = strconv.Itoa(counter)
 		countSend = []byte(countSendS)
-		_, err = conn.WriteToUDP(countSend, serverAddr)
+		_, err = conn.Write(countSend)
+
+		CheckError(err)
+
 		fmt.Print(counter)
-		time.Sleep(1)
+		time.Sleep(1 * time.Second)
 
 	}
 }
 
-//backup listens for number, saves numbers in string.
 func backup(ipAdr string, port string, counter int) {
-	fmt.Println("Im backup")
-	Backup := exec.Command("gnome-terminal", "-x", "sh", "-c", "go run ex6.go")
-	Backup.Run()
+
+	fmt.Println("This is the backup")
 	serverAddr, err := net.ResolveUDPAddr("udp", ipAdr+":"+port)
 	psock, err := net.ListenUDP("udp4", serverAddr)
-	psock.SetDeadline(time.Now().Add(3 * time.Second)) //using timer on socket to check if master is alive
 
-	if err != nil {
-		return
-	}
+	defer psock.Close()
+
+	CheckError(err)
+
 	buf := make([]byte, 1024)
 
 	for {
-		n, remoteAddr, err := psock.ReadFromUDP(buf) // if psock times out, err vil get a value
-		fmt.Println(n)
+		psock.SetDeadline(time.Now().Add(3 * time.Second))
+		_, _, err := psock.ReadFromUDP(buf)
 
 		if err != nil {
-			fmt.Println("Im alive")
+			Backup := exec.Command("gnome-terminal", "-x", "sh", "-c", "go run ex6.go")
+			Backup.Run()
 			return
+
 		}
-
-		//else{
-		//	fmt.Println("Im alive")
-
-		//}
-		//if remoteAddr.IP.String() != MY_IP {
-		//		fmt.Printf("%s\n", buf)
-		//	}
-
 	}
 
 }
 
 func main() {
-
 	counter := 0
-	backup("localhost", "30000", counter) //
-	master("localhost", "30000", counter) //
-	//LocalAddr, err := net.ResolveUDPAddr("udp", "127.0.0.1:0")
-	//CheckError(err)
-
+	backup("localhost", "30000", counter)
+	master("localhost", "30000", counter)
 }
