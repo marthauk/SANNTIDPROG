@@ -1,12 +1,11 @@
 package elevDrivers
 
 /*
+#cgo CFLAGS: -std=c99
 #cgo LDFLAGS: -lcomedi -lm
 #include "io.h"
 */
-
 import "C"
-
 
 func IoInit() bool {
 	return bool(int(C.io_init()) != 1)
