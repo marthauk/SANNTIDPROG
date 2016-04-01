@@ -1,30 +1,24 @@
 package main
 
-import(
-    "elevDrivers"
+import (
+	. "./elevDrivers"
+	"fmt"
 )
 
-func main(){
-    elev_init();
-    fmt.printf("Press STOP button to stop elevator and exit program.\n");
+func main() {
+	Elev_init()
+	fmt.Println("Press STOP button to stop elevator and exit program.\n")
+	Elev_set_motor_direction(1)
 
-    elev_set_motor_direction(DIRN_UP);
+	for {
+		if Elev_get_floor_sensor_signal() == N_FLOORS-1 {
+			Elev_set_motor_direction(DIRN_DOWN)
+		} else if Elev_get_floor_sensor_signal() == 0 {
+			Elev_set_motor_direction(DIRN_UP)
+		}
 
-    for ()
-    {
-        if (elev_get_floor_sensor_signal() == N_FLOORS -1) {
-            elev_set_motor_direction(DIRN_DOWN);
-        } else if (elev_get_floor_sensor_signal() == 0) {
-            elev_set_motor_direction(DIRN_UP);
-        }
-
-        if (elev_get_stop_signal()) {
-            elev_set_motor_direction(DIRN_STOP);
-            return 0;
-            
-        }
-    }
+		if Elev_get_stop_signal() == 1 {
+			Elev_set_motor_direction(DIRN_STOP)
+		}
+	}
 }
-
-
-
