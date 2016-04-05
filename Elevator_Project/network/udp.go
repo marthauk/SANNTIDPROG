@@ -1,4 +1,4 @@
-package main
+package network
 
 // ip-adress: 129.241.187.23
 import (
@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"time"
 	"encoding/json"
+	"strconv"
 )
 
 
@@ -28,14 +29,15 @@ func CheckError(err error) {
 	}
 }
 
-func UDPListen(Master bool) {
+func UDPListen(Master bool,listenPort int) {
 
 	/* For testing: sett addresse lik ip#255:30000*/
 	
 	if(Master){
 	
-		ServerAddr, err := net.ResolveUDPAddr("udp", ":40000")
-		CheckError(err)
+	//ServerAddr, err := net.ResolveUDPAddr("udp", ":40000")
+	ServerAddr, err := net.ResolveUDPAddr("udp", ":"+strconv.Itoa(listenPort))
+	CheckError(err)
 
 	/* Now listen at selected port */
 	ServerConn, err := net.ListenUDP("udp", ServerAddr)
@@ -50,9 +52,7 @@ func UDPListen(Master bool) {
 
 
 
-		if err != nil {
-			fmt.Println("Error: ", err)
-		}
+		CheckError(err)
 		time.Sleep(time.Second * 1)
 		}
 	}
@@ -64,10 +64,10 @@ func UDPListen(Master bool) {
 
 }
 
-func UDPSend() {
+func UDPSend(transmitPort int) {
 
 	/* Dial up UDP */
-	BroadcastAddr, err := net.ResolveUDPAddr("udp", "129.241.187.255:40000")
+	BroadcastAddr, err := net.ResolveUDPAddr("udp", "255.255.255.255:"+strconv.Itoa(transmitPort))
 	CheckError(err)
 	/* Make a connection to the server */
 	Conn, err := net.DialUDP("udp", nil, BroadcastAddr)
