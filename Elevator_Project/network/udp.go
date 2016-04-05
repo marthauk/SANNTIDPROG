@@ -96,7 +96,7 @@ func UDPSend(transmitPort int) {
 
 	
 
-func main() {
+func UDP_initialize() {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	go UDPListen()
