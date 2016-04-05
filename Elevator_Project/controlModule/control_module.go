@@ -1,5 +1,5 @@
 //need to include message.go
-
+package controlModule
 import(
 "net"
 ."./network"
