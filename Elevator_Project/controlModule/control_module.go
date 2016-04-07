@@ -5,7 +5,7 @@ import(
 ."./network"
 "strconv"
 )
-const port int = 40000;//setting the portnumber. Selected a random port
+const PORT int = 40000;//setting the portnumber. Selected a random port
 
 type elev struct {
 	self_id int
@@ -49,13 +49,23 @@ func Initialize_connections(){
  				isMaster=true
  				
  		}
- 	UDP_initialize(isMaster,port,masterIP)
+ 	UDP_initialize(isMaster,PORT,masterIP)
 	
 	
 }
 //må gjere det til pekerfunksjoner!!
 
-func Set_master(){
+
+
+
+/* Functions needed to make:
+	elev_remove
+	evel_add
+	broadcast_message
+	
+*/
+
+func(e *elev) Set_master(){
 	// checking which elevator has the highest IP to determine master 
 	max :=0
 	for i,_ :=range(e.elevators){
