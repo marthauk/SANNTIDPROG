@@ -29,11 +29,11 @@ func CheckError(err error) {
 	}
 }
 
-func UDPListen(Master bool,listenPort int) {
+func UDPListen(isMaster bool,listenPort int) {
 
 	/* For testing: sett addresse lik ip#255:30000*/
 	
-	if(Master){
+	if(isMaster){
 	
 	//ServerAddr, err := net.ResolveUDPAddr("udp", ":40000")
 	ServerAddr, err := net.ResolveUDPAddr("udp", ":"+strconv.Itoa(listenPort))
@@ -63,11 +63,26 @@ func UDPListen(Master bool,listenPort int) {
 
 
 }
-
-func UDPSend(transmitPort int) {
+ 
+//need to include message-sending
+func UDPSend(isMaster bool,transmitPort int,masterIP string) {
 
 	/* Dial up UDP */
+
+	if (isMaster){
 	BroadcastAddr, err := net.ResolveUDPAddr("udp", "255.255.255.255:"+strconv.Itoa(transmitPort))
+	CheckError(err)
+	/* Make a connection to the server */
+	Conn, err := net.DialUDP("udp", nil, BroadcastAddr)
+	CheckError(err)
+
+	defer Conn.Close()
+
+
+
+	}
+	else{
+	BroadcastAddr, err := net.ResolveUDPAddr("udp", masterIP+strconv.Itoa(transmitPort))
 	CheckError(err)
 	/* Make a connection to the server */
 	Conn, err := net.DialUDP("udp", nil, BroadcastAddr)
@@ -90,16 +105,18 @@ func UDPSend(transmitPort int) {
 		time.Sleep(time.Second * 5)
 	}
 	
+	}
+	
 }
 
 	
 
 	
 
-func UDP_initialize() {
+func UDP_initialize(isMaster bool, port int,masterIP string) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	go UDPListen()
-	go UDPSend()
+	go UDPListen(isMaster,port)
+	go UDPSend(isMaster,port,masterID)
 	time.Sleep(time.Second * 30)
 }
