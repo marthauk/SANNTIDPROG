@@ -29,6 +29,7 @@ func CheckError(err error) {
 	}
 }
 
+Does not actually need isMaster for UDPListen. Needs to listen to everything either way.
 func UDPListen(isMaster bool,listenPort int) {
 
 	/* For testing: sett addresse lik ip#255:30000*/
