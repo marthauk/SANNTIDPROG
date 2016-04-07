@@ -53,6 +53,7 @@ func Initialize_connections(){
 	
 	
 }
+//må gjere det til pekerfunksjoner!!
 
 func Set_master(){
 	// checking which elevator has the highest IP to determine master 
