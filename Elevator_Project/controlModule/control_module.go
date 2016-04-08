@@ -4,13 +4,14 @@ import(
 "net"
 ."./network"
 "strconv"
+. "./message"
 )
 const PORT int = 40000;//setting the portnumber. Selected a random port
 
 type elev struct {
 	self_id int
 	self_IP string
-	elevators map[int]*Elevator
+	elevators map[int]*Elevator //elevator declared in FSM
 	external_orders [2][N_FLOORS]int
 	master int 
 }
@@ -43,17 +44,14 @@ func Initialize_connections(){
  	var masterIP string ="255.255.255.255"
  	masterIP=tempIP + strconv.Itoa(e.master)
  	if e.self_id==e.master
- 		{	//the current elevator is master, needs master settings
- 				//go masterUDPSEND
- 				//go masterUDPLISTEN
- 				isMaster=true
- 				
+ 		{	
+ 			isMaster=true	
  		}
  	UDP_initialize(isMaster,PORT,masterIP)
 	
 	
 }
-//må gjere det til pekerfunksjoner!!
+
 
 
 
@@ -64,6 +62,11 @@ func Initialize_connections(){
 	broadcast_message
 	
 */
+
+func broadcast_message(msg chan Message){
+
+}	
+
 
 func(e *elev) Set_master(){
 	// checking which elevator has the highest IP to determine master 
