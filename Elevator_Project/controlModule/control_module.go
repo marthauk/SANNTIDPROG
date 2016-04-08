@@ -60,8 +60,19 @@ func Initialize_connections(){
 	elev_remove
 	evel_add
 	broadcast_message
-	
+	queue_editor 	
 */
+
+
+func elev_remove(){
+
+}
+
+func elev_add(){
+	//need to respond on some sort of button/message
+
+}
+
 
 func broadcast_message(msg chan Message){
 
