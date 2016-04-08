@@ -41,21 +41,34 @@ func UDPListen(isMaster bool, listenPort int, masterIP string) {
 	ServerConn, err := net.ListenUDP("udp", ServerAddr)
 	CheckError(err)
 	defer ServerConn.Close()
+	var received_message Message 
+
+	var storageChannel := make(chan Message)
 
 	buffer := make([]byte, 1024)
+	trimmed_buffer:= make([]byte, 1)
 		if (isMaster){
 			for {
 				n, addr, err := ServerConn.ReadFromUDP(buffer)
-				fmt.Println("Received ", string(buffer[0:n]), " from ", addr)
-				CheckError(err)
-				time.Sleep(time.Second * 1)
+					trimmed_buffer=buffer[0:n]
+					fmt.Println("Received ", string(buffer[0:n]), " from ", addr)
+					CheckError(err)
+					err= json.Unmarshal(trimmed_buffer,&received_message)
+					CheckError(err)
+					storageChannel <- received_message
+					time.Sleep(time.Second * 1)
 			}
 		}else{
 			for {
 				n, addr, err := ServerConn.ReadFromUDP(buffer)
-				if (addr==masterIP){
+				if (addr.String()==masterIP){
+					trimmed_buffer=buffer[0:n]
 					fmt.Println("Received ", string(buffer[0:n]), " from ", addr)
 					CheckError(err)
+					err= json.Unmarshal(trimmed_buffer,&received_message)
+					CheckError(err)
+					storageChannel <- received_message
+					fmt.Println(storageChannel)
 					time.Sleep(time.Second * 1)
 				}
 			
@@ -67,7 +80,7 @@ func UDPListen(isMaster bool, listenPort int, masterIP string) {
 
  
 //need to include message-sending
-func UDPSend(isMaster bool,transmitPort int,masterIP string) {
+func UDPSend(isMaster bool,transmitPort int,masterIP string,broadcastMessage chan Message) {
 
 	/* Dial up UDP */
 
@@ -114,14 +127,19 @@ func UDPSend(isMaster bool,transmitPort int,masterIP string) {
 	
 }
 
-	
+func Message_reader(storage_channel chan Message){
+	for{
+		Message := <- storage_channel
+		fmt.Println(Message.)
+	}
+}
 
 	
 
-func UDP_initialize(isMaster bool, port int,masterIP string) {
+func UDP_initialize(isMaster bool, port int,masterIP string,broadcastMessage chan Message) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	go UDPListen(isMaster,port,masterIP)
-	go UDPSend(isMaster,port,masterIP)
+	go UDPSend(isMaster,port,masterIP, broadcastMessage)
 	time.Sleep(time.Second * 30)
 }
