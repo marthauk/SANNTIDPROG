@@ -26,11 +26,22 @@ func main(){
 	/* EVENT CHANNELS */
 	Objective_Chan :=			make(chan Button)
 	Floor_Arrival_Chan :=		make(chan int)
+<<<<<<< HEAD
+	Door_Open_Req_Chan := 		make(chan int)
+=======
 	//Door_Close_Chan :=		make(chan int)
+>>>>>>> bdc2cbb830feddd62a07b3047fd322bf379e8b2d
 	
 	/* STARTS ESSENTIAL PROCESSES */
 	Orders_init()
 	go Order_handler(Button_Press_Chan)
+<<<<<<< HEAD
+	go FSM_safekill()
+	go FSM_sensor_pooler(Button_Press_Chan)
+	go FSM_floor_tracker(&e, Location_Chan, Floor_Arrival_Chan)
+	//go FSM_objective_dealer(&e, State_Chan, Destination_Chan, Objective_Chan)
+	//go FSM_elevator_updater(&e, Motor_Direction_Chan, Location_Chan, Destination_Chan, State_Chan)
+=======
 	go FSM_sensor_pooler(Button_Press_Chan)
 	go FSM_floor_tracker(e, Location_Chan, Floor_Arrival_Chan,)
 	go FSM_objective_dealer(e, State_Chan, Destination_Chan, Objective_Chan)
@@ -45,6 +56,7 @@ func main(){
 	go FSM_objective_dealer(e, State_Chan, Destination_Chan, Objective_Chan)
 	go FSM_elevator_updater(e, Motor_Direction_Chan, Floor_Arrival_Chan,Destination_Chan, State_Chan)
 	go Orders_init()
+>>>>>>> bdc2cbb830feddd62a07b3047fd322bf379e8b2d
 	time.Sleep(time.Millisecond*200)
 
 	/* STARTUP TEXT */
@@ -59,6 +71,24 @@ func main(){
 	fmt.Printf("CURRENT_FLOOR: %d \n", e.CURRENT_FLOOR)
 	fmt.Printf("DIRECTION: %d \n\n\n", e.DIRECTION)
 
+<<<<<<< HEAD
+	Print_all_orders()
+
+	for{
+		select{
+		case newObjective := 		<- Objective_Chan:
+			FSM_Start_Driving(newObjective, &e, State_Chan, Motor_Direction_Chan, Location_Chan)
+		
+		case newFloorArrival := 	<- Floor_Arrival_Chan:
+			FSM_should_stop_or_not(newFloorArrival, &e, State_Chan, Motor_Direction_Chan, Door_Open_Req_Chan)
+
+		case doorReq := 			<- Door_Open_Req_Chan:
+			fmt.Println("DoorOpen fuck")
+			FSM_door_opener(doorReq, &e, State_Chan)
+
+		default:
+			time.Sleep(50 * time.Millisecond)
+=======
 	Print_all_orders()	
 	
 	for{
@@ -83,6 +113,7 @@ func main(){
 		case DoorClosed := <- Door_Close_Chan:
 			FSM_Return_to_idle(Elevator)
 		*/
+>>>>>>> bdc2cbb830feddd62a07b3047fd322bf379e8b2d
 		}
 	}
 }
