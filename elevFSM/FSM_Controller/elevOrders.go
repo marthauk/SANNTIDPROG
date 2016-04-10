@@ -2,6 +2,10 @@ package FSM_Controller
 
 import (
 	"fmt"
+<<<<<<< HEAD
+	
+=======
+>>>>>>> bdc2cbb830feddd62a07b3047fd322bf379e8b2d
 )
 
 /*
@@ -119,7 +123,11 @@ func Order_handler(Button_Press_Chan chan Button){
 
 func Print_all_orders(){
 	for i := 0; i < ROWS;i++{
+<<<<<<< HEAD
+		fmt.Printf("%d,", orders[i])
+=======
 		fmt.Printf("a[%d] = %d\n",i, orders[i])
+>>>>>>> bdc2cbb830feddd62a07b3047fd322bf379e8b2d
 	}
 	fmt.Printf("\n\n\n\n\n\n")
 }
