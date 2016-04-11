@@ -33,8 +33,8 @@ func main(){
 	go Order_handler(Button_Press_Chan)
 	go FSM_safekill()
 	go FSM_sensor_pooler(Button_Press_Chan)
-	go FSM_floor_tracker(&e, Location_Chan, Floor_Arrival_Chan)
-	//go FSM_objective_dealer(&e, State_Chan, Destination_Chan, Objective_Chan)
+	go FSM_floor_tracker(&e, Location_Chan, Floor_Arrival_Chan, Motor_Direction_Chan, Destination_Chan, State_Chan)
+	go FSM_objective_dealer(&e, State_Chan, Destination_Chan, Objective_Chan, Motor_Direction_Chan, Location_Chan)
 	//go FSM_elevator_updater(&e, Motor_Direction_Chan, Location_Chan, Destination_Chan, State_Chan)
 	time.Sleep(time.Millisecond*200)
 
@@ -42,12 +42,9 @@ func main(){
 	fmt.Printf("\n\n\n####################################################\n")
 	fmt.Printf("## The elevator has been succesfully initiated! #### \n") 
 	fmt.Printf("####################################################\n\n")
-	fmt.Printf("STATE: %d \n", e.STATE)
-	fmt.Printf("CURRENT_FLOOR: %d \n", e.CURRENT_FLOOR)
-	fmt.Printf("DESTINATION_FLOOR: %d \n", e.DESTINATION_FLOOR)
-	fmt.Printf("DIRECTION: %d \n\n\n", e.DIRECTION)
-	fmt.Printf("STATE: %d \n", e.STATE)
-	fmt.Printf("CURRENT_FLOOR: %d \n", e.CURRENT_FLOOR)
+	fmt.Printf("STATE: %d , ", e.STATE)
+	fmt.Printf("CURRENT_FLOOR: %d , ", e.CURRENT_FLOOR)
+	fmt.Printf("DESTINATION_FLOOR: %d , ", e.DESTINATION_FLOOR)
 	fmt.Printf("DIRECTION: %d \n\n\n", e.DIRECTION)
 
 	Print_all_orders()
@@ -55,14 +52,14 @@ func main(){
 	for{
 		select{
 		case newObjective := 		<- Objective_Chan:
-			FSM_Start_Driving(newObjective, &e, State_Chan, Motor_Direction_Chan, Location_Chan)
-		
-		case newFloorArrival := 	<- Floor_Arrival_Chan:
-			FSM_should_stop_or_not(newFloorArrival, &e, State_Chan, Motor_Direction_Chan, Door_Open_Req_Chan)
+			FSM_Start_Driving(newObjective, &e, State_Chan, Motor_Direction_Chan, Location_Chan, Destination_Chan)
 
+		case newFloorArrival := 	<- Floor_Arrival_Chan:
+			FSM_should_stop_or_not(newFloorArrival, &e, State_Chan, Motor_Direction_Chan, Door_Open_Req_Chan, Location_Chan, Destination_Chan)
+		
 		case doorReq := 			<- Door_Open_Req_Chan:
 			fmt.Println("DoorOpen fuck")
-			FSM_door_opener(doorReq, &e, State_Chan)
+			FSM_door_opener(doorReq, &e, State_Chan, Motor_Direction_Chan, Location_Chan, Destination_Chan)
 
 		default:
 			time.Sleep(50 * time.Millisecond)
