@@ -1,7 +1,8 @@
-package FSM_Controller
+package elevController
 
 import (
 	"fmt"
+	."./elevDrivers"
 )
 
 /*
@@ -51,6 +52,8 @@ func Add_order(button Button){
 		for i := 0; i < ROWS; i++{
 			if orders[i].Floor == -1{
 				orders[i] = button
+				Elev_set_button_lamp(button.Button_type, button.Floor, 1)
+				fmt.Println("\nA new order was added to the list...")
 				/*
 				if orders[i].Button_type == b_COMMAND{
 					move_order_infront(i)
@@ -76,6 +79,7 @@ func Check_if_order_exists(button Button) int{
 func Remove_order(current_floor int){
 	for i := 0; i < ROWS; i++{
 		if orders[i].Floor == current_floor{
+			Elev_set_button_lamp(orders[i].Button_type, orders[i].Floor, 0)
 			orders[i].Floor = -1
 			orders[i].Button_type = -1
 			left_shift_orders(i)
